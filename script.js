@@ -1,16 +1,7 @@
 const CLIENT_ID = '4e33afc606f522cac2e1f6cface82438';
-const outputElement = document.getElementById
 
-const myForm = document.getElementById('LinkForm');
+const outputElement = document.getElementById('output');
 
-myForm.addEventListener('submit', function (event) {
-    // Prevent the default form submission behavior (which reloads the page)
-    event.preventDefault();
-
-    const Link = document.getElementById('username').value;
-
-    console.log('Form submitted!');
-    console.log('Username:', username);
 
     async function fetchAllAnime(username) {
     let url = `https://api.myanimelist.net/v2/users/${encodeURIComponent(username)}/animelist?limit=100`;
@@ -53,16 +44,48 @@ myForm.addEventListener('submit', function (event) {
     URL.revokeObjectURL(url);
     }
 
+const myForm = document.getElementById('LinkForm');
+const downloadBtn = document.getElementById('downloadBtn');
+
+myForm.addEventListener('submit', async function (event) {
+    // Prevent the default form submission behavior (which reloads the page)
+    event.preventDefault();
+
+    const username = document.getElementById('username').value.trim();
+
+    console.log('Form submitted!');
+    console.log('Username:', username);
+
+      if (!username) {
+        outputElement.textContent = 'Enter a username';
+        return;
+    }
+
+    const submitBtn = myForm.querySelector('button[type="submit"]');
+    submitBtn.disabled = true;
+    try {
+        outputElement.textContent = 'Loading…';
+        const list = await fetchAllAnime(username);
+        saveAnimelistToLocal(username, list);         // save for later
+        // downloadJson(`${username}_animelist.json`, list); // optional: force a JSON download
+        outputElement.innerHTML = `<p>Saved ${list.length} entries for <b>${username}</b>.</p>`;
+    } catch (err) {
+        outputElement.textContent = `Error: ${err.message}`;
+        console.error(err);
+    } finally {
+        submitBtn.disabled = false;
+    }
+
 });
 
-
-
-
-
-
-// Replace with your credential style (client id or bearer token)
-       // safer for client-key style
-// const ACCESS_TOKEN = 'YOUR_ACCESS_TOKEN'; // if using OAuth2 bearer token
-
-
-
+if (downloadBtn) {
+  downloadBtn.addEventListener('click', function () {
+    const username = document.getElementById('username').value.trim();
+    const data = loadAnimelistFromLocal(username);
+    if (!data) {
+      outputElement.textContent = 'No saved data for that username.';
+      return;
+    }
+    downloadJson(`${username}_animelist.json`, data);
+  });
+}

@@ -1,26 +1,21 @@
 <!DOCTYPE html>
-<html>  
-    
-    <head>  
-        <title>Roast-My-Anime</title>
-    </head>
-    <body>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Roast-My-Anime</title>
+  </head>
+  <body>
+    <h1>Write your MyAnimeList Username to get Roasted!</h1>
 
-        <script>src="./script.js"</script>
+    <form id="LinkForm">
+      <label for="username">Username:</label>
+      <input type="text" id="username" name="username" required />
+      <button type="submit">Submit</button>
+      <button type="button" id="downloadBtn" disabled>Download JSON</button>
+    </form>
 
-        <h1>Paste in your link to your anilist to get Roasted!</h1>
+    <div id="output" aria-live="polite"></div>
 
-        
-
-        <form id="LinkForm">
-            <label for="link">Link:</label>
-            <input type="text" id="Link" name="Link" required>
-            
-            <button type="submit">Submit</button>
-        </form>
-
-        
-
-    </body>
-
+    <script src="./script.js"></script>
+  </body>
 </html>
