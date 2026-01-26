@@ -1,7 +1,22 @@
-# roast-my-list
-Roasts you based on your anime/manga watchlists.
+# Roast My List
 
+A tiny static site that roasts a **MyAnimeList** profile.
 
-This will be a very basic project to stop myself from vibe coding everything and go back to the old day to make sure that I will learn like the people did back in the day.
+- **No backend**
+- **No keys**
+- **No AI calls** (the roast is deterministic)
+- Uses **Jikan v4** public endpoints: user profile, statistics, and favorites
 
-The goal of this project is for me to master html and javascript (I hate css). 
+## Run
+
+Just open `index.html` in a browser.
+
+## What it shows
+
+- A roast (based on your public stats + favorites)
+- A small stats panel
+- A **Download JSON** button (downloads the fetched profile/stats/favorites)
+
+## Notes
+
+Jikan is rate-limited (and MyAnimeList can rate-limit upstream). If you get a 429, wait a bit and try again.

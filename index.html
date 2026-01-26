@@ -1,21 +1,237 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
   <head>
     <meta charset="utf-8" />
-    <title>Roast-My-Anime</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>Roast My List</title>
+    <style>
+      :root {
+        --bg: #000;
+        --fg: #fff;
+        --muted: rgba(255, 255, 255, 0.7);
+        --border: rgba(255, 255, 255, 0.14);
+        --card: rgba(255, 255, 255, 0.04);
+      }
+
+      * {
+        box-sizing: border-box;
+      }
+
+      body {
+        margin: 0;
+        background: var(--bg);
+        color: var(--fg);
+        font-family: ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+        line-height: 1.5;
+      }
+
+      a {
+        color: inherit;
+      }
+
+      .container {
+        max-width: 860px;
+        padding: 48px 20px;
+        margin: 0 auto;
+      }
+
+      .header {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+        margin-bottom: 28px;
+      }
+
+      h1 {
+        margin: 0;
+        font-size: 32px;
+        letter-spacing: -0.02em;
+      }
+
+      .sub {
+        margin: 0;
+        color: var(--muted);
+        max-width: 60ch;
+      }
+
+      .card {
+        border: 1px solid var(--border);
+        background: var(--card);
+        border-radius: 12px;
+        padding: 18px;
+      }
+
+      form {
+        display: flex;
+        gap: 10px;
+        flex-wrap: wrap;
+        align-items: end;
+      }
+
+      label {
+        display: block;
+        font-size: 12px;
+        color: var(--muted);
+        margin-bottom: 6px;
+      }
+
+      input {
+        background: transparent;
+        color: var(--fg);
+        border: 1px solid var(--border);
+        border-radius: 10px;
+        padding: 10px 12px;
+        min-width: 240px;
+        outline: none;
+      }
+
+      input:focus {
+        border-color: rgba(255, 255, 255, 0.35);
+      }
+
+      button {
+        background: var(--fg);
+        color: var(--bg);
+        border: 1px solid var(--fg);
+        border-radius: 10px;
+        padding: 10px 12px;
+        font-weight: 600;
+        cursor: pointer;
+      }
+
+      button.secondary {
+        background: transparent;
+        color: var(--fg);
+        border: 1px solid var(--border);
+      }
+
+      button:disabled {
+        opacity: 0.5;
+        cursor: not-allowed;
+      }
+
+      .grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: 14px;
+        margin-top: 14px;
+      }
+
+      @media (min-width: 820px) {
+        .grid {
+          grid-template-columns: 1.2fr 0.8fr;
+          align-items: start;
+        }
+      }
+
+      .kicker {
+        font-size: 12px;
+        color: var(--muted);
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        margin: 0 0 8px 0;
+      }
+
+      .roast {
+        font-size: 18px;
+        margin: 0;
+      }
+
+      .small {
+        color: var(--muted);
+        font-size: 13px;
+        margin-top: 10px;
+      }
+
+      .stats {
+        list-style: none;
+        padding: 0;
+        margin: 0;
+        display: grid;
+        gap: 10px;
+      }
+
+      .stat {
+        border: 1px solid var(--border);
+        background: rgba(255, 255, 255, 0.03);
+        border-radius: 10px;
+        padding: 12px;
+      }
+
+      .stat .label {
+        font-size: 12px;
+        color: var(--muted);
+      }
+
+      .stat .value {
+        font-size: 18px;
+        font-weight: 700;
+        margin-top: 4px;
+      }
+
+      .error {
+        color: var(--fg);
+        border: 1px solid rgba(255, 255, 255, 0.25);
+        background: rgba(255, 255, 255, 0.06);
+        border-radius: 12px;
+        padding: 14px;
+      }
+
+      footer {
+        margin-top: 26px;
+        color: var(--muted);
+        font-size: 12px;
+      }
+
+      code {
+        background: rgba(255, 255, 255, 0.08);
+        padding: 0 6px;
+        border-radius: 6px;
+      }
+    </style>
   </head>
   <body>
-    <h1>Write your MyAnimeList Username to get Roasted!</h1>
+    <div class="container">
+      <div class="header">
+        <h1>Roast My List</h1>
+        <p class="sub">
+          Enter a <strong>MyAnimeList</strong> username. I’ll pull your public stats and favorites via <code>Jikan v4</code> and roast you
+          (deterministic, no AI).
+        </p>
+      </div>
 
-    <form id="LinkForm">
-      <label for="username">Username:</label>
-      <input type="text" id="username" name="username" required />
-      <button type="submit">Submit</button>
-      <button type="button" id="downloadBtn" disabled>Download JSON</button>
-    </form>
+      <div class="card">
+        <form id="roastForm">
+          <div>
+            <label for="username">MyAnimeList username</label>
+            <input type="text" id="username" name="username" autocomplete="username" placeholder="e.g. Jikan" required />
+          </div>
 
-    <div id="output" aria-live="polite"></div>
+          <button type="submit" id="submitBtn">Roast me</button>
+          <button type="button" class="secondary" id="downloadBtn" disabled>Download JSON</button>
+        </form>
+      </div>
 
-    <script src="./script.js"></script>
+      <div class="grid" id="resultGrid" hidden>
+        <section class="card" aria-live="polite">
+          <p class="kicker">Roast</p>
+          <p class="roast" id="roastText"></p>
+          <div class="small" id="roastMeta"></div>
+        </section>
+
+        <aside class="card">
+          <p class="kicker">Stats</p>
+          <ul class="stats" id="statsList"></ul>
+        </aside>
+      </div>
+
+      <div id="errorBox" class="error" hidden></div>
+
+      <footer>
+        Uses <a href="https://docs.api.jikan.moe/" target="_blank" rel="noreferrer">Jikan</a> (unofficial MAL API). Rate limits apply.
+      </footer>
+
+      <script src="./script.js"></script>
+    </div>
   </body>
 </html>
